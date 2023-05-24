@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+docker exec -it larapine php artisan "$@"

@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  larapine:
+    image: larapine
+    container_name: larapine
+    build:
+      context: ./runtimes/81
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/:/var/www/html/:rw
+    ports:
+      - 80:80
+
+    

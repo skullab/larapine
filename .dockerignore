@@ -1,0 +1,13 @@
+# GIT
+.git
+.gitignore
+# MacOS
+.DS_Store
+# Visual Studio Code
+.vscode
+.vscode/**
+# JetBrains
+.idea
+.idea/**
+.fleet
+.fleet/**
