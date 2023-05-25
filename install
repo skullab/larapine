@@ -1,0 +1,57 @@
+#!/usr/bin/bash
+
+function checkDocker {
+    if [[ -z $(bash which docker) ]]; then
+        echo "no docker found"
+        exit 1
+    fi
+    if [[ -z $(docker compose --version) ]]; then
+        echo "no docker compose found"
+        exit 1
+    fi
+}
+
+function runLarapineContainer {
+    docker compose up -d
+    if [ $? -eq 0 ]; then
+        installLaravel
+    else
+        echo "An error occurred..."
+        exit 1
+    fi
+}
+
+function installLaravel {
+    if [ -d ./src ] && [ "$(ls -A ./src)" ]; then
+        if (whiptail --title "Larapine" --yesno "Source directory is not empty. Do you want to upgrade your previous Laravel installation ?" 8 78); then
+            docker exec -it larapine composer update
+        fi
+    else
+        if (whiptail --title "Larapine" --yesno "Do you want install Laravel now ?" 8 78); then
+            docker exec -it larapine composer create-project laravel/laravel .
+            if [ $? -eq 0 ]; then
+                initGit
+            fi
+        fi
+    fi
+
+}
+
+function initGit {
+    if (whiptail --title "Larapine" --yesno "Do you want initialize git for laravel project ?" 8 78); then
+        cd src && git init
+    fi
+}
+
+function main {
+    checkDocker
+    if [ "$( docker container inspect -f '{{.State.Running}}' larapine )" = "true" ]; then
+        installLaravel
+    else
+        if (whiptail --title "Larapine" --yesno "Do you want run larapine ?" 8 78); then
+            runLarapineContainer
+        fi
+    fi
+}
+
+main
