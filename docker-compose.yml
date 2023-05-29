@@ -10,5 +10,29 @@ services:
       - ./src/:/var/www/html/:rw
     ports:
       - 80:80
+    networks:
+      - larapine-network
 
-    
+  mysql:
+        image: 'mysql/mysql-server:8.0'
+        container_name: larapine-mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 'larapine'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: 'larapine_test'
+            MYSQL_USER: 'larapine'
+            MYSQL_PASSWORD: 'larapine'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'larapine-mysql:/var/lib/mysql'
+        networks:
+            - larapine-network
+
+volumes:
+    larapine-mysql:
+        driver: local
+
+networks:
+  larapine-network:
+    name: larapine-network
+    external: true

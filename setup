@@ -1,0 +1,118 @@
+#!/usr/bin/bash
+
+function checkDocker {
+     if [[ -z $(bash which docker) ]]; then
+        echo "no docker found"
+        exit 1
+    fi
+    if [[ -z $(docker compose --version) ]]; then
+        echo "no docker compose found"
+        exit 1
+    fi
+}
+
+function checkLarapineNetwork {
+    docker network inspect larapine-network
+    if [ $? -eq 0 ]; then
+        return 0
+    fi
+    return 1
+}
+
+function checkLarapineContainer {
+    if [ "$( docker container inspect -f '{{.State.Running}}' larapine )" = "true" ]; then
+        return 0
+    fi
+    return 1
+}
+
+function runLarapineContainer {
+    checkLarapineContainer > /dev/null 2>&1
+    if [ $? -eq 1 ]; then
+        checkLarapineNetwork > /dev/null 2>&1
+        if [ $? -eq 1 ]; then
+            docker network create larapine-network
+        fi
+        docker compose up -d
+        if [ $? -ne 0 ]; then
+            echo "error"
+            exit 1
+        fi
+    fi
+    menu
+}
+
+function stopLarapineContainer {
+    checkLarapineContainer > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        docker compose down
+    fi
+    menu
+}
+
+function installLaravel {
+    if [ -d ./src ] && [ "$(ls -A ./src)" ]; then
+        if (whiptail --title "Larapine" --yesno "Source directory is not empty. Do you want to upgrade your previous Laravel installation ?" 8 78); then
+            updateComposer
+        fi
+    else
+        if (whiptail --title "Larapine" --yesno "Do you want install Laravel now ?" 8 78); then
+            docker exec -it larapine composer create-project laravel/laravel .
+            if [ $? -eq 0 ]; then
+                initGit
+            fi
+        fi
+    fi
+    menu
+}
+
+function updateComposer {
+    docker exec -it larapine composer update
+}
+
+function initGit {
+    if (whiptail --title "Larapine" --yesno "Do you want initialize git for laravel project ?" 8 78); then
+        cd src && git init
+    fi
+}
+
+function requireComposerComponent {
+    component=$(whiptail --title "Larapine" --inputbox "Choose the component to install" 8 39 3>&1 1>&2 2>&3)
+    docker exec -it larapine composer require "$component"
+    if [ $? -ne 0 ]; then
+        whiptail --title "Larapine" --msgbox "An error occurred with the component $component" 8 78
+    fi
+    menu
+}
+
+function menu {
+    CHOICE=$(
+        whiptail --title "Larapine" --menu "Choose an option" 25 78 16 \
+                "1" "Exit" \
+                "2" "Run larapine container" \
+                "3" "Install or update Laravel" \
+                "4" "Stop larapine container" \
+                "5" "Require composer component" \
+                3>&1 1>&2 2>&3
+        )
+    case $CHOICE in
+        1)
+            exit 0
+            ;;
+        2)
+            runLarapineContainer
+            ;;
+        3) 
+            installLaravel
+            ;;
+        4) 
+            stopLarapineContainer
+            ;;
+        5)
+            requireComposerComponent
+            ;;
+    esac
+}
+
+checkDocker
+menu
