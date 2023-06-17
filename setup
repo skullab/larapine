@@ -70,9 +70,12 @@ function installLaravel {
 }
 
 function fixPermissions {
-    bash larapine chown -R www-data:www-data /var/www/html/storage
-    bash larapine chown root:www-data .env
-    bash larapine chmod 640 .env
+    bash larapine chown -R www-data:www-data /var/www/html/storage &&
+    bash larapine chown root:www-data .env &&
+    bash larapine chmod 640 .env &&
+    if [ $1 -eq 1 ]; then
+        menu
+    fi
 }
 
 function updateComposer {
@@ -82,6 +85,9 @@ function updateComposer {
 function initGit {
     if (whiptail --title "Larapine" --yesno "Do you want initialize git for laravel project ?" 8 78); then
         cd src && git init
+    fi
+    if [ $1 -eq 1 ]; then
+        menu
     fi
 }
 
@@ -117,10 +123,10 @@ function menu {
             installLaravel
             ;;
         4) 
-            initGit
+            initGit 1
             ;;
         5)
-            fixPermissions
+            fixPermissions 1
             ;;
         6)
             stopLarapineContainer
