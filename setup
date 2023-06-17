@@ -73,7 +73,7 @@ function fixPermissions {
     bash larapine chown -R www-data:www-data /var/www/html/storage &&
     bash larapine chown root:www-data .env &&
     bash larapine chmod 640 .env &&
-    if [ $1 -eq 1 ]; then
+    if [[ $1 == 1 ]]; then
         menu
     fi
 }
@@ -86,7 +86,7 @@ function initGit {
     if (whiptail --title "Larapine" --yesno "Do you want initialize git for laravel project ?" 8 78); then
         cd src && git init
     fi
-    if [ $1 -eq 1 ]; then
+    if [[ $1 == 1 ]]; then
         menu
     fi
 }
