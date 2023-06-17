@@ -59,11 +59,20 @@ function installLaravel {
         if (whiptail --title "Larapine" --yesno "Do you want install Laravel now ?" 8 78); then
             docker exec -it larapine composer create-project laravel/laravel .
             if [ $? -eq 0 ]; then
+                fixPermissions
+            fi
+            if [ $? -eq 0 ]; then
                 initGit
             fi
         fi
     fi
     menu
+}
+
+function fixPermissions {
+    larapine chown -R www-data:www-data /var/www/html/storage
+    larapine chown root:www-data .env
+    larapine chmod 640 .env
 }
 
 function updateComposer {
