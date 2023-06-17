@@ -70,9 +70,9 @@ function installLaravel {
 }
 
 function fixPermissions {
-    larapine chown -R www-data:www-data /var/www/html/storage
-    larapine chown root:www-data .env
-    larapine chmod 640 .env
+    bash larapine chown -R www-data:www-data /var/www/html/storage
+    bash larapine chown root:www-data .env
+    bash larapine chmod 640 .env
 }
 
 function updateComposer {
@@ -100,8 +100,10 @@ function menu {
                 "1" "Exit" \
                 "2" "Run larapine container" \
                 "3" "Install or update Laravel" \
-                "4" "Stop larapine container" \
-                "5" "Require composer component" \
+                "4" "Init git" \
+                "5" "Fix permissions" \
+                "6" "Stop larapine container" \
+                "7" "Require composer component" \
                 3>&1 1>&2 2>&3
         )
     case $CHOICE in
@@ -115,9 +117,15 @@ function menu {
             installLaravel
             ;;
         4) 
-            stopLarapineContainer
+            initGit
             ;;
         5)
+            fixPermissions
+            ;;
+        6)
+            stopLarapineContainer
+            ;;
+        7)
             requireComposerComponent
             ;;
     esac
