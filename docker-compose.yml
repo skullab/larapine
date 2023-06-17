@@ -9,7 +9,7 @@ services:
     volumes:
       - ./src/:/var/www/html/:rw
     ports:
-      - 80:80
+      - 8000:80
     networks:
       - larapine-network
 
