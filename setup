@@ -26,6 +26,13 @@ function checkLarapineContainer {
     return 1
 }
 
+function checkLarapineDatabaseContainer {
+    if [ "$( docker container inspect -f '{{.State.Running}}' $1 )" = "true" ]; then
+        return 0
+    fi
+    return 1
+}
+
 function runLarapineContainer {
     checkLarapineContainer > /dev/null 2>&1
     if [ $? -eq 1 ]; then
@@ -100,16 +107,128 @@ function requireComposerComponent {
     menu
 }
 
+function checkLarapineDatabaseMysql {
+    checkLarapineDatabaseContainer "larapine-mysql"
+    if [ $? -eq 0 ]; then
+        whiptail --title "Larapine" --msgbox "MySQL Container is running" 8 78
+    else
+        whiptail --title "Larapine" --msgbox "MySQL Container is NOT running" 8 78
+    fi
+    menuDatabaseMysql
+}
+
+function startLarapineDatabaseMysql {
+    docker compose up mysql -d
+    checkLarapineDatabaseMysql
+}
+
+function stopLarapineDatabaseMysql {
+    docker rm -f larapine-mysql
+    checkLarapineDatabaseMysql
+}
+
+function menuDatabaseMysql {
+    CHOICE=$(
+        whiptail --title "Larapine - MySQL" --menu "Choose an option" 25 78 16 \
+                "1" "Back" \
+                "2" "Check MySQL Status" \
+                "3" "Start MySQL" \
+                "4" "Stop MySQL" \
+                3>&1 1>&2 2>&3
+        )
+    case $CHOICE in
+        1) 
+            menuDatabase
+            ;;
+        2)
+            checkLarapineDatabaseMysql
+            ;;
+        3)
+            startLarapineDatabaseMysql
+            ;; 
+        4)
+            stopLarapineDatabaseMysql
+            ;; 
+    esac
+}
+
+function checkLarapineDatabasePostgres {
+    checkLarapineDatabaseContainer "larapine-postgres"
+    if [ $? -eq 0 ]; then
+        whiptail --title "Larapine" --msgbox "PostgreSQL Container is running" 8 78
+    else
+        whiptail --title "Larapine" --msgbox "PostgreSQL Container is NOT running" 8 78
+    fi
+    menuDatabasePostgres
+}
+
+function startLarapineDatabasePostgres {
+    docker compose up postgres -d
+    checkLarapineDatabasePostgres
+}
+
+function stopLarapineDatabasePostgres {
+    docker rm -f larapine-postgres
+    checkLarapineDatabasePostgres
+}
+
+function menuDatabasePostgres {
+    CHOICE=$(
+        whiptail --title "Larapine - PostreSQL" --menu "Choose an option" 25 78 16 \
+                "1" "Back" \
+                "2" "Check PostgreSQL Status" \
+                "3" "Start PostegreSQL" \
+                "4" "Stop PostgreSQL" \
+                3>&1 1>&2 2>&3
+        )
+    case $CHOICE in
+        1) 
+            menuDatabase
+            ;;
+        2)
+            checkLarapineDatabasePostgres
+            ;;
+        3)
+            startLarapineDatabasePostgres
+            ;;
+        4)
+            stopLarapineDatabasePostgres
+            ;;
+    esac
+}
+
+function menuDatabase {
+    CHOICE=$(
+        whiptail --title "Larapine - Database" --menu "Choose an option" 25 78 16 \
+                "1" "Back" \
+                "2" "MySql" \
+                "3" "PostgreSQL" \
+                3>&1 1>&2 2>&3
+        )
+    case $CHOICE in
+        1) 
+            menu
+            ;;
+        2)
+            menuDatabaseMysql
+            ;;
+        3)
+            menuDatabasePostgres
+            ;; 
+    esac
+}
+
 function menu {
     CHOICE=$(
         whiptail --title "Larapine" --menu "Choose an option" 25 78 16 \
                 "1" "Exit" \
-                "2" "Run larapine container" \
+                "2" "Run larapine containers" \
                 "3" "Install or update Laravel" \
                 "4" "Init git" \
                 "5" "Fix permissions" \
-                "6" "Stop larapine container" \
+                "6" "Stop larapine containers" \
                 "7" "Require composer component" \
+                "8" "Database" \
                 3>&1 1>&2 2>&3
         )
     case $CHOICE in
@@ -133,6 +252,9 @@ function menu {
             ;;
         7)
             requireComposerComponent
+            ;;
+        8)
+            menuDatabase
             ;;
     esac
 }

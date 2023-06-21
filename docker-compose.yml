@@ -14,31 +14,51 @@ services:
       - larapine-network
 
   mysql:
-        image: 'mysql/mysql-server:8.0'
-        container_name: larapine-mysql
-        environment:
-            MYSQL_ROOT_PASSWORD: 'larapine'
-            MYSQL_ROOT_HOST: '%'
-            MYSQL_DATABASE: 'larapine_test'
-            MYSQL_USER: 'larapine'
-            MYSQL_PASSWORD: 'larapine'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
-        volumes:
-            - 'larapine-mysql:/var/lib/mysql'
-        networks:
-            - larapine-network
+    image: 'mysql/mysql-server:8.0'
+    container_name: larapine-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'larapine'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: 'larapine'
+      MYSQL_USER: 'larapine'
+      MYSQL_PASSWORD: 'larapine'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    restart: always
+    volumes:
+      - 'larapine-mysql:/var/lib/mysql'
+    ports:
+      - 3307:3306
+    networks:
+      - larapine-network
+  
+  postgres:
+    image: postgres:15.3-alpine3.17
+    container_name: larapine-postgres
+    environment:
+      POSTGRES_PASSWORD: larapine
+      POSTGRES_USER: larapine
+      POSTGRES_DB: larapine
+    restart: always
+    volumes:
+      - 'larapine-postgres:/var/lib/postgresql/data'
+    ports:
+      - 5433:5432
+    networks:
+      - larapine-network
 
   mailpit:
-        image: 'axllent/mailpit:latest'
-        ports:
-            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
-        networks:
-            - larapine-network
+    image: 'axllent/mailpit:latest'
+    ports:
+      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+    networks:
+      - larapine-network
 
 volumes:
-    larapine-mysql:
-        driver: local
+  larapine-mysql:
+    driver: local
+  larapine-postgres:
+    driver: local
 
 networks:
   larapine-network:
