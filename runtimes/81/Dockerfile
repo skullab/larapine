@@ -33,7 +33,8 @@ COPY docker-entrypoint /usr/local/bin/docker-entrypoint
 COPY php.ini /etc/php81/conf.d/99_larapine.ini
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
-COPY nginx/conf.d/default.conf /etc/nginx/http.d/default.conf
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/http.d/default.conf /etc/nginx/http.d/default.conf
 
 RUN mkdir -p /etc/periodic/1min
 RUN echo -e "#!/bin/sh\nphp /var/www/html/artisan schedule:run >> /dev/null 2>&1" > /etc/periodic/1min/laravel-schedule.sh
