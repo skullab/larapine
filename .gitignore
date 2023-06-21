@@ -1,1 +1,19 @@
+# Project
 src/
+
+# IntelliJ
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# eclipse
+.settings
+.classpath
+.project
+
+# OS
+.DS_Store
+
+# VS Code
+.vscode/
