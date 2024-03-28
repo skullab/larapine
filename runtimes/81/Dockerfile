@@ -1,4 +1,4 @@
-FROM alpine:3.17.3 AS larapine
+FROM alpine:3.17.7 AS larapine
 
 LABEL maintainer="Ivan Maruca"
 
