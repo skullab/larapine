@@ -77,7 +77,7 @@ function installLaravel {
 }
 
 function fixPermissions {
-    bash larapine chown -R www-data:www-data /var/www/html/storage &&
+    bash larapine chown -R www-data:www-data /var/www/html &&
     bash larapine chown root:www-data .env &&
     bash larapine chmod 640 .env &&
     if [[ $1 == 1 ]]; then

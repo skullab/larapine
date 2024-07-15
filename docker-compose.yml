@@ -4,7 +4,7 @@ services:
     image: larapine
     container_name: larapine
     build:
-      context: ./runtimes/81
+      context: ./runtimes/83
       dockerfile: Dockerfile
     volumes:
       - ./src/:/var/www/html/:rw
