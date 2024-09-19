@@ -16,7 +16,7 @@ RUN apk add php81 php81-cli php81-dev php81-pgsql php81-sqlite3 php81-gd php81-p
     php81-pdo php81-pdo_mysql php81-pdo_pgsql php81-pdo_sqlite \
     php81-phar php81-tokenizer php81-dom php81-xmlwriter php81-xmlreader php81-fileinfo \
     php81-sodium php81-iconv php81-simplexml \
-    php81-exif
+    php81-exif php81-ftp
 RUN apk add nodejs npm yarn
 
 RUN apk add nginx

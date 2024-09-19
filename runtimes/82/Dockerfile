@@ -16,7 +16,7 @@ RUN apk add php82 php82-cli php82-dev php82-pgsql php82-sqlite3 php82-gd php82-p
     php82-pdo php82-pdo_mysql php82-pdo_pgsql php82-pdo_sqlite \
     php82-phar php82-tokenizer php82-dom php82-xmlwriter php82-xmlreader php82-fileinfo \
     php82-sodium php82-iconv php82-simplexml \
-    php82-exif
+    php82-exif php82-ftp
 RUN apk add nodejs npm yarn
 
 RUN apk add nginx

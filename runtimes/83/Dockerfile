@@ -16,7 +16,7 @@ RUN apk add php83 php83-cli php83-dev php83-pgsql php83-sqlite3 php83-gd php83-p
     php83-pdo php83-pdo_mysql php83-pdo_pgsql php83-pdo_sqlite \
     php83-phar php83-tokenizer php83-dom php83-xmlwriter php83-xmlreader php83-fileinfo \
     php83-sodium php83-iconv php83-simplexml \
-    php83-exif
+    php83-exif php83-ftp
 RUN apk add nodejs npm yarn
 
 RUN apk add nginx
